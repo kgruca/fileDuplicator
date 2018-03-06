@@ -1,91 +1,133 @@
-// CIS 22A
-// Lab 04 - Filestream operations
+// File Duplicator
 // Name: Krzysztof Gruca
-
-/* Pseudocode
-   
-   define ifstream object to open the file to be cloned and read its data
-
-   define ofstream object to write the newly cloned file
-
-   define three string variables: one for the path tp the existing file, one for a
-   path to the new file, and one to store the data from the existing file
-
-   output info to user, letting them know that the program is useful to create duplicate files
-
-   ask the user for path to the file that they wish to clone
-
-   ask for the specified path where the file clone should be saved
-
-   while input path fails
-      error message
-	  input the correct path
-
-   while the output path fails
-      error message
-	  input correct path
-   
-   getline(original file, first line of text)
-
-   while the input file still has data to write to the new file
-      write data to new file
-	  getline(original file, next line of text)
-
-  close the original file
-  close the cloned file
-
-  system pause
-  return 0
-
- */
 
 
 #include <iostream>
 #include <string>
 #include <fstream>
 
+void intro();
+std::string inputPath();
+std::string outputPath();
+void openInput(std::ifstream &, std::string);
+void openOutput(std::ofstream &, std::string);
+void createClonedFile(std::ifstream &, std::ofstream &, std::string);
+void outro(std::string);
+bool repeat();
+void goodBye();
+
 int main() {
 
 	std::ifstream inputFile;
 	std::ofstream outputFile;
 	std::string inputLoc, outputLoc, input;
+	bool cloneAnother;
 
-	std::cout << "Hello! I'm your personal assistant/file duplicator!" << std::endl;
-	std::cout << "I will ask you a few questions pertaining to the file you wish to clone." << std::endl << std::endl;
+	do {
+		intro();
 
-	std::cout << "First, please enter the path to the file that will be cloned: ";
-	std::cin >> inputLoc;
+		inputLoc = inputPath();
 
-	std::cout << "\nNow, enter the name/path of the cloned file: ";
-	std::cin >> outputLoc;
+		outputLoc = outputPath();
 
-	inputFile.open(inputLoc.c_str());
-	outputFile.open(outputLoc.c_str());
+		openInput(inputFile, inputLoc);
 
-	while (inputFile.fail()) {
-		std::cout << "\n\nERROR: Cannot open file. Please provide the correct path: ";
-		std::cin >> inputLoc;
-		inputFile.open(inputLoc.c_str());	
-	}
+		openOutput(outputFile, outputLoc);
 
-	while (outputFile.fail()) {
-		std::cout << "\n\nERROR: Cannot save file to specified location. Please provide the correct path: ";
-		std::cin >> outputLoc;
-		outputFile.open(outputLoc.c_str());	
-	}
+		createClonedFile(inputFile, outputFile, input);
 
-	getline(inputFile, input);
+		outro(outputLoc);
 
-	while (inputFile) {
-		outputFile << input << std::endl;
-		getline(inputFile, input);
-	}
+		cloneAnother = repeat();
+	} while (cloneAnother);
 
-	inputFile.close();
-	outputFile.close();
-
-	std::cout << "\n\nThe new, cloned file has been created! Please check \'" << outputLoc << "\'." << std::endl << std::endl <<std::endl;
+	goodBye();
 
 	system("pause");
 	return 0;
+}
+
+void intro() {
+	std::cout << "Hello! I'm your personal assistant/file duplicator!" << std::endl;
+	std::cout << "I will ask you a few questions pertaining to the file you wish to clone." << std::endl << std::endl;
+}
+
+std::string inputPath() {
+	std::string inputLocation;
+
+	std::cout << "First, please enter the path to the file that will be cloned: ";
+	std::cin >> inputLocation;
+
+	return inputLocation;
+}
+
+std::string outputPath() {
+	std::string outputLocation;
+
+	std::cout << "\nNow, enter the name/path of the cloned file: ";
+	std::cin >> outputLocation;
+
+	return outputLocation;
+}
+
+void openInput(std::ifstream &inFile, std::string name) {
+	inFile.open(name.c_str());
+
+	while (inFile.fail()) {
+		std::cout << "\n\nERROR: Cannot open file. Please provide the correct path: ";
+		std::cin >> name;
+		inFile.open(name.c_str());
+	}
+}
+
+void openOutput(std::ofstream &outFile, std::string name) {
+	outFile.open(name.c_str());
+
+	while (outFile.fail()) {
+		std::cout << "\n\nERROR: Cannot save file to specified location. Please provide the correct path: ";
+		std::cin >> name;
+		outFile.open(name.c_str());
+	}
+}
+
+void createClonedFile(std::ifstream &inFile, std::ofstream &outFile, std::string input) {
+	getline(inFile, input);
+
+	while (inFile) {
+		outFile << input << std::endl;
+		getline(inFile, input);
+	}
+
+	inFile.close();
+	outFile.close();
+}
+
+void outro(std::string name) {
+	std::cout << "\n\nThe new, cloned file has been created! Please check \'" << name << "\'." << std::endl << std::endl << std::endl;
+}
+
+bool repeat() {
+	char decision;
+
+	std::cout << "Would you like to copy another file? Type \'Y\' or \'y\' for yes\n";
+	std::cout << "or \'N\' or \'n\' for no: ";
+	std::cin >> decision;
+	std::cout << std::endl;
+
+	while (decision != 'Y' && decision != 'y' && decision != 'N' && decision != 'n') {
+		std::cout << "Please enter a valid answer choice (\'Y\', \'y\', \'N\', or \'n\'): ";
+		std::cin >> decision;
+	}
+
+	std::cout << std::endl;
+
+	if (decision == 'Y' || decision == 'y') {
+		return true;
+	}
+	else
+		return false;
+}
+
+void goodBye() {
+	std::cout << "Thank you for taking advantage of this program! Goodbye :)" << std::endl << std::endl;
 }
