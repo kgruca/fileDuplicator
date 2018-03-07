@@ -1,11 +1,12 @@
 // File Duplicator
 // Name: Krzysztof Gruca
-
+// takes a document specified by user and duplicates it at a location desired by user
 
 #include <iostream>
 #include <string>
 #include <fstream>
 
+// function declarations
 void intro();
 std::string inputPath();
 std::string outputPath();
@@ -17,10 +18,13 @@ bool repeat();
 void goodBye();
 
 int main() {
-
+	// ifstream object
 	std::ifstream inputFile;
+	// ofstream object 
 	std::ofstream outputFile;
+	// to hold the path to original file, path to duplicated file, and input read from original file, respectively
 	std::string inputLoc, outputLoc, input;
+	// store user's decision to duplicate another file or not
 	bool cloneAnother;
 
 	do {
@@ -47,11 +51,14 @@ int main() {
 	return 0;
 }
 
+// intro explaining the purpose of fileDuplicator program to user
 void intro() {
 	std::cout << "Hello! I'm your personal assistant/file duplicator!" << std::endl;
 	std::cout << "I will ask you a few questions pertaining to the file you wish to clone." << std::endl << std::endl;
 }
 
+/* ask user for path to the file they wish to duplicate
+   returns the original's location back to main, to be stored in inputLoc variable */
 std::string inputPath() {
 	std::string inputLocation;
 
@@ -61,6 +68,8 @@ std::string inputPath() {
 	return inputLocation;
 }
 
+/* ask user for the file path to which new, duplicated file will be saved
+   returns duplicated file's path back to main, to be stored to outputLoc variable */
 std::string outputPath() {
 	std::string outputLocation;
 
@@ -70,6 +79,8 @@ std::string outputPath() {
 	return outputLocation;
 }
 
+/* open the file that will be duplicated
+   catch error in opening file, if one should arise */
 void openInput(std::ifstream &inFile, std::string name) {
 	inFile.open(name.c_str());
 
@@ -80,6 +91,9 @@ void openInput(std::ifstream &inFile, std::string name) {
 	}
 }
 
+
+/* create the file that will hold duplicated data
+catch error in creating file, if one should arise */
 void openOutput(std::ofstream &outFile, std::string name) {
 	outFile.open(name.c_str());
 
@@ -90,6 +104,10 @@ void openOutput(std::ofstream &outFile, std::string name) {
 	}
 }
 
+/* write data from original file to duplicated file
+   getline to read entire lines (with whitespaces) and copy them to new file
+   while loop to process data until end of original file is reached
+   close both files */
 void createClonedFile(std::ifstream &inFile, std::ofstream &outFile, std::string input) {
 	getline(inFile, input);
 
@@ -102,10 +120,15 @@ void createClonedFile(std::ifstream &inFile, std::ofstream &outFile, std::string
 	outFile.close();
 }
 
+/* inform user of successful duplication 
+   let them know of the path to the duplicated file*/
 void outro(std::string name) {
 	std::cout << "\n\nThe new, cloned file has been created! Please check \'" << name << "\'." << std::endl << std::endl << std::endl;
 }
 
+/* ask user if they would like to duplicate another file
+   while statement for user's choice validation
+   return user's choice to main */
 bool repeat() {
 	char decision;
 
@@ -128,6 +151,7 @@ bool repeat() {
 		return false;
 }
 
+/* thank user for using the program */
 void goodBye() {
 	std::cout << "Thank you for taking advantage of this program! Goodbye :)" << std::endl << std::endl;
 }
